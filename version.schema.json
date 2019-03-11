@@ -1,0 +1,43 @@
+{
+   "$schema": "http://json-schema.org/draft-07/schema#",
+   "$id": "version.schema.json",
+   "title": "Versioning",
+   "description": "This utility is used to versioning of the content",
+   "type": "object",
+    "properties": {
+      "id": {
+        "description": "The unique identifier for an versioned entity",
+        "type": "string"
+      },
+      "applicationID": {
+        "description": "identifier of the application or client",
+        "type": "string"
+      },
+      "contentID":{
+        "description": "identifier of the content entity",
+        "type": "string"
+      },
+      "dateAdded": {
+        "description": "Added date of the version created",
+        "type": "string"
+      },
+      "data": {
+        "type": "string",
+        "description": "decodable encoded data string to remove the dependency of the contant structure",
+      },
+      "assets": {
+        "type": "array",
+        "description": "contains identifiers of assigned sections",
+        "items": {
+          "type": "string"
+        }
+      },
+      "parent": {
+        "type": "string",
+        "description": "contains the identifier of immediate parent",
+      }
+      
+   },
+
+   "required": ["id", "applicationID", "contentID", "dateAdded"]
+}
