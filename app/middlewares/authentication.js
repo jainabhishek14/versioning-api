@@ -8,7 +8,12 @@ module.exports = function(req, res, next){
 			const isValidRequest = axios.post(params.authenticationUrl, {
 				token: req.headers.authorization	
 			}, {
-				headers: {Authorization: req.headers.authorization}
+				headers: {
+					Authorization: req.headers.authorization,
+					httpsAgent: new https.Agent({
+          				rejectUnauthorized: params.sslVerify || false
+          			})
+				}
 			})
 				.then(res => {
 					console.log("Response: ", res.data.payload);
