@@ -1,23 +1,25 @@
 "use strict";
 const axios = require("axios");
+const https = require("https");
 const params = require("../../config/params");
 
 module.exports = function(req, res, next){
-	if(process.env.NODE_ENV === "production" && params.unsecuredPath.indexOf(req.path) === -1){
+	if(params.unsecuredPath.indexOf(req.path) === -1){
 		if(req.headers.hasOwnProperty("authorization")){
 			const isValidRequest = axios.post(params.authenticationUrl, {
 				token: req.headers.authorization	
 			}, {
 				headers: {
 					Authorization: req.headers.authorization,
-					httpsAgent: new https.Agent({
-          				rejectUnauthorized: params.sslVerify || false
-          			})
-				}
+					"Content-Type":"application/json"
+				},
+				httpsAgent: new https.Agent({
+      				rejectUnauthorized: params.sslVerify || false
+      			})
 			})
 				.then(res => {
-					console.log("Response: ", res.data.payload);
-					return next();
+					console.log("Response: ", res.data);
+					next();
 				})
 				.catch(err => {
 					console.log("Error: ", err.response);
