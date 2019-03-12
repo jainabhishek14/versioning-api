@@ -20,6 +20,7 @@
     "express": "^4.16.3",
     "fs": "0.0.1-security",
     "helmet": "^3.13.0",
+    "https": "^1.0.0",
     "moment": "^2.22.2",
     "mongodb": "^3.1.1",
     "mongoose": "^5.4.17",
