@@ -15,7 +15,6 @@ exports.unknownMethodHandler = function(req, res, next){
 };
 
 exports.errorHandler = (err, req, res, next) => {
-	logs.logRequests("error",err.stack);
 	if(isJSON(req.body)){
 		return next();	
 	} else{ 

@@ -22,7 +22,7 @@ exports.parseValue = (field, value) => {
 	else if (Array.isArray(value)) {
 		var array = [];
 		value.forEach(function(item, itemKey) {
-			array[itemKey] = parseValue(itemKey, item);
+			array[itemKey] = this.parseValue(itemKey, item);
 		});
 		return array;
 	}

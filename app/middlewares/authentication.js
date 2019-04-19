@@ -6,7 +6,7 @@ const params = require("../../config/params");
 module.exports = function(req, res, next){
 	if(params.unsecuredPath.indexOf(req.path) === -1){
 		if(req.headers.hasOwnProperty("authorization")){
-			const isValidRequest = axios.post(params.authenticationUrl, {
+			axios.post(params.authenticationUrl, {
 				token: req.headers.authorization	
 			}, {
 				headers: {
@@ -14,11 +14,11 @@ module.exports = function(req, res, next){
 					"Content-Type":"application/json"
 				},
 				httpsAgent: new https.Agent({
-      				rejectUnauthorized: params.sslVerify || false
-      			})
+					rejectUnauthorized: params.sslVerify || false
+				})
 			})
-				.then(res => {
-					console.log("Response: ", res.data);
+				.then(response => {
+					res.locals.tokenData = response.data;
 					next();
 				})
 				.catch(err => {

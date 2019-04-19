@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sentry/node": "^5.0.6",
     "amqplib": "^0.5.2",
     "axios": "^0.18.0",
     "bigchaindb-driver": "^4.1.0",

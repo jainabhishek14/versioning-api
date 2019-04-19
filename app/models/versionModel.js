@@ -9,11 +9,45 @@ var versionSchema = new Schema({
 		required: "Application identifier is missing"
 	},
 	entity: {
+		type: ObjectId,
+		required: "Entity identifier is missing",
+		ref: "Entity"
+	},
+	status: {
 		type: String,
-		required: "Entity identifier is missing"
+		enum: ["pending", "approve", "reject"],
+		trim: true,
+		index: true
+	},
+	isDraft: {
+		type: Boolean	
+	},
+	isActive: {
+		type: Boolean
+	},
+	addedBy: {
+		id: {
+			type: String,
+			required: "Author identifier is missing"
+		},
+		name: {
+			type: String,
+			required: "Author Name is missing"
+		}
+	},
+	reviewedBy: {
+		id: {
+			type: String
+		},
+		name: {
+			type: String
+		}
+	},
+	reviewedAt: {
+		type: Date
 	},
 	data: {
-		type: Object
+		type: Map
 	},
 	assets: [{type: ObjectId, ref: "Version"}],
 	parent: {

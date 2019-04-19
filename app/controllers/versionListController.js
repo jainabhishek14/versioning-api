@@ -1,75 +1,103 @@
 "use strict";
 
-
 const mongoose = require("mongoose");
 const Version = mongoose.model("Version");
+const Entity = mongoose.model("Entity");
 const params = require("../../config/params");
 
+const saveVersion = (data, isDocument = false) => {
+	return new Version(data).save()
+	.then(versionCreated => (isDocument) ? 
+		Entity.updateOne({"_id": data.entity}, {head: versionCreated._id})
+			.exec()
+			.then(entityUpdated => data.entity)
+			.catch(err => console.log(err)) : 
+		versionCreated._id)
+	.catch(err => {
+		console.log(err);
+		return false;
+	});
+};
 
-const  saveSection = (applicationID, entityID, section) => {
-	return new Promise(function(resolve, reject){
-		let newSection = new Version();
-		newSection.application = applicationID;
-		newSection.entity = entityID;
-		newSection.data = section.data;
-		newSection.parent = (section.hasOwnProperty("previousVersion")) ? section.previousVersion : undefined;
-		newSection.save((err, sectionCreated) => {
-			if(err){
-				reject(err);
+const saveSection = (application, entity, addedBy, data) => {
+	let sectionData = {
+		application: application,
+		entity: entity,
+		addedBy: addedBy,
+		data: data
+	};
+	return saveVersion(sectionData);
+}
+
+const saveSections = params => {
+	const {application, entity, sections, addedBy, newSections} = params;
+	let updatedContent = (sections && sections.length) ? sections.filter(section => "data" in section) : new Array();
+	let sectionsToBeInserted = newSections;
+	if(updatedContent.length){
+		updatedContent.forEach((content, index) => {
+			sectionsToBeInserted.push(content.data);
+		});
+	}
+	let assets = new Array();
+	const allSectionsCompleted = new Promise((resolve, reject) => {
+		sectionsToBeInserted.forEach(async (section, index) => {
+			const sectionId = await saveSection(application, entity, addedBy, section);
+			if(sectionId){
+				assets.push(sectionId._id);
 			}
-			resolve(newSection._id);
+			if(index === sectionsToBeInserted.length -1){
+				resolve(assets);
+			}
 		});
 	});
+	return allSectionsCompleted.then(assets => assets).catch(err => console.log(err));
 };
 
-const hasSectionError = async sections => {
-	const validation = await sections.filter(section => {
-		if(!section.isUpdated && !section.hasOwnProperty("previousVersion")){
-			return true;
+exports.changeStatusOfEntityVersion = (id, status) => {
+	Version.findOne({_id: req.params.id, application: res.locals.application}, (err, result) => {
+		if(err){
+			console.log(err);
+		}
+		
+		if(result){
+			result.reviewedBy = null;
+			result.status = status;
+			result.reviewedAt = null;
+			result.markModified("reviewedAt");
+			return result.save().exec();
 		}
 	});
-	return validation.length;
-}
-
-const saveSections = async (applicationID, entityID, sections) => {
-	let assets = [];
-	const validation = await hasSectionError(sections);
-	if(validation){
-		return false;
-	}
-	
-	await sections.forEach(async section => {
-		if(!section.hasOwnProperty('isUpdated') || section.isUpdated){
-			await saveSection(applicationID, entityID, section)
-			.then(function(sectionId){
-				assets.push(sectionId);
-			}, function(err){
-				return false;
-			});
-		}else{
-			assets.push(section.previousVersion);
-		}
-	});
-	return assets;
 };
 
-const saveVersion = async (applicationID, entityID, previousVersion, sections) => {
-	const assets = await saveSections(applicationID, entityID, sections);
-	if(assets.length){
-		let newVersion = new Version();
-		newVersion.application = applicationID;
-		newVersion.entity = entityID;
-		newVersion.assets = assets;
-		newVersion.parent = previousVersion;
-		newVersion.save((err, versionCreated) => {
-			if(err){
-				return false;
+exports.checkExistenceOfVersion = async parameters => {
+	return Version.findOne(params).populate({path: 'entity', match: {_id: params.entity}}).exec();
+};
+
+exports.saveEntityVersion = async params => {
+	const assets = await saveSections(params);
+	if("sections" in params && params.sections){
+		params.sections.forEach(section => {
+			if(! ("data") in section){
+				assets.push(section.id);
 			}
-			return true;
-		});	
+		});
 	}
-	return false;
-}
+	let data = {};
+	if(assets.length){
+		const { application, entity, addedBy, parent, sections, isDraft, isActive, status } = params;
+		data['application'] = application;
+		data['entity'] = entity;
+		data['addedBy'] = addedBy;
+		data['parent'] = parent;
+		data['assets'] = assets;
+		data['isDraft'] = isDraft;
+		data['isActive'] = isActive;
+		data['status'] = status;
+		return saveVersion(data, true);
+	} else{
+		return false;	
+	}
+};
 
 exports.list_versions = (req, res) => {
 	Version.aggregate([
@@ -79,7 +107,7 @@ exports.list_versions = (req, res) => {
 					entity: req.params.entityID	
 				},
 				{
-					application: req.params.applicationID
+					application: res.locals.application
 				}]
 			}
 		},
@@ -108,23 +136,47 @@ exports.list_versions = (req, res) => {
 	});
 };
 
-exports.create_version = (req, res) => {
-	if(req.hasOwnProperty("body") && Object.keys(req.body).length){
-		if(saveVersion(req.params.applicationID, req.params.entityID, req.body.previousVersion, req.body.sections)){
-			return res.status(201).json({message: "Successful"});	
-		}
-		return res.status(400).json({message: "Invalid parameters"});	
-	} else {
-		return res.status(400).json({message: "Bad request. Post data not found"});	
-	}
-};
-
-
 exports.get_asset_details = (req, res) => {
 	Version.findById(req.params.id, (err, version) => {
 		if(err){
 			res.status(803).json({message: err.message});
-		}	
+		}
 		res.status(200).json(version);
 	});
 };
+
+exports.reviewVersion = (req, res) => {
+	if(params.reviewActions.indexOf(req.params.action) !== -1){
+		Version.findOne({_id: req.params.id, application: res.locals.application, status: "pending"}, (err, result) => {
+			if(err){
+				return res.status(500).json({message: err.message});
+			}
+			if(result){
+				result.reviewedBy = {
+					id: res.locals.tokenData.user.id,
+					name: res.locals.tokenData.user.name
+				};
+				result.status = req.params.action;
+				result.reviewedAt = new Date();
+				result.markModified("reviewedAt");
+				result.save((err, version) => {
+					if(err){
+						res.status(500).json({message: err});	
+					}
+					if(req.params.action === "approve"){
+						Entity.findOneAndUpdate({_id: version.entity}, {approvedVersion: version._id}, (err, entity) => {
+							if(err){
+								res.status(400).json({message: err});
+							}
+							res.status(201).json({message: "version Successfully reviewed"});
+						});
+					}
+				});
+			} else {
+				res.status(404).json({message: "Version not found."})
+			}
+		});
+	} else{
+		res.status(400).json({message: "Invalid review action. Please refer documentation"});
+	}
+}

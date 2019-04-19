@@ -28,7 +28,7 @@ exports.logRequests = (type, message = "") => {
 };
 
 
-exports.retrieveLogs = (req, res) => {
+exports.retrieveLogs = req => {
 	const options = {
 		from: moment(req.query.from).format("x"),
 		until: moment().format("x"),

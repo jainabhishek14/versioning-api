@@ -1,9 +1,9 @@
 # Version Utility 
 
-This services maintains the version logging of all the assets created.
+This services maintains the version logging of all the entitites created.
 
     Service Id: MS-NDE-VERSION-0016
-    Version ID: 003
+    Version ID: 004
     Technology Stack: Node, MongoDb, Express JS
     Owner: Abhishek Jain
     identifier: version
@@ -11,35 +11,36 @@ This services maintains the version logging of all the assets created.
 # Endpoints 
 Following are the end points of this API
 
-1. [Get Versions](#get-versions)  
-2. [Get Asset Information](#get-asset-information)  
-3. [Create Version](#create-version)  
+1. [Get Entities](#get-entities)  
+2. [Get Entity Information](#get-entity-information)  
+3. [Create Entity](#create-entity)
+4. [Update Entity](#update-entity)
 6. [Pending Tasks](#pending-tasks)
 7. [Health Check](#verify-deployment)  
 8. [Access Logs](#access-logs)
 
 
-##  Get Versions
-    EndPoint: <domain-name>/application/<applicationID>/entity/<entityID>
+##  Get Entitties
+    EndPoint: <domain-name>/entity
+    Description: It lists all the active approved entities associated with application
  
 ### Request
     Request Type: GET
     Headers:
         Content Type: "application/json"
         Authorization: "JWT Token"
-    Input Parameters:
-        applicationID: String (Required)
-        entityID: String (Required)
+        x-api-key: "Application identifier or API Key"
 
 
 
 ### Basic Usage:
 
     $.ajax({
-        url: <domain-name>/application/<applicationID>/entity/<entityID>,
+        url: <domain-name>/entity,
         type: "GET",
         headers: {
-            "Authorization":<JWT-token>
+            "Authorization":<JWT-token>,
+            "x-api-key":<application-indentifier>
         },
         Content-Type:'application/json',
         success: function(response){},
@@ -55,162 +56,100 @@ you will receive a json array of objects as below.
         Message: "OK"
         Result: 
             [
-                {
-                    "_id": "5c8265c55203f5b9e8dd24b2",
-                    "assets": [],
-                    "application": "9676868887",
-                    "entity": "68698558589587",
-                    "data": {
-                        "key": "value2"
+            {
+                "addedBy": {
+                    "id": "96969jbjnbkbkkbuyiyiykmnbnbmnb",
+                    "name": "Krishna Yadav"
+                },
+                "isActive": true,
+                "approvedVersion": {
+                    "addedBy": {
+                        "id": "96969jbjnbkbkkbuyiyiykmnbnbmnb",
+                        "name": "Krishna Yadav"
                     },
-                    "parent": "5c8265b95203f5b9e8dd24b0",
-                    "dateAdded": "2019-03-08T12:53:25.120Z",
-                    "dateUpdated": "2019-03-08T12:53:25.120Z",
-                    "__v": 0,
-                    "parentHierarchy": [
+                    "reviewedBy": {
+                        "id": "96969jbjnbkbkkbuyiyiykmnbnbmnb",
+                        "name": "Krishna Yadav"
+                    },
+                    "assets": [
                         {
-                            "_id": "5c825c205203f5b9e8dd24ac",
-                            "assets": [],
-                            "application": "9676868887",
-                            "entity": "68698558589587",
-                            "data": {
-                                "key": "value1"
+                            "addedBy": {
+                                "id": "96969jbjnbkbkkbuyiyiykmnbnbmnb",
+                                "name": "Krishna Yadav"
                             },
-                            "dateAdded": "2019-03-08T12:12:16.041Z",
-                            "dateUpdated": "2019-03-08T12:12:16.041Z",
+                            "assets": [],
+                            "_id": "5cb878e593a1c4116125413f",
+                            "application": "45963453495784t348eidgdgisgfw394u0",
+                            "entity": "5cb878cd93a1c4116125413c",
+                            "data": {
+                                "abhishek": "jain",
+                                "organisation": "WNS"
+                            },
+                            "dateAdded": "2019-04-18T13:17:25.320Z",
+                            "dateUpdated": "2019-04-18T13:17:25.320Z",
                             "__v": 0
                         },
                         {
-                            "_id": "5c8265a55203f5b9e8dd24ae",
-                            "assets": [],
-                            "application": "9676868887",
-                            "entity": "68698558589587",
-                            "data": {
-                                "key": "value2"
+                            "addedBy": {
+                                "id": "96969jbjnbkbkkbuyiyiykmnbnbmnb",
+                                "name": "Krishna Yadav"
                             },
-                            "parent": "5c825c205203f5b9e8dd24ac",
-                            "dateAdded": "2019-03-08T12:52:53.413Z",
-                            "dateUpdated": "2019-03-08T12:52:53.413Z",
-                            "__v": 0
-                        },
-                        {
-                            "_id": "5c8265b95203f5b9e8dd24b0",
                             "assets": [],
-                            "application": "9676868887",
-                            "entity": "68698558589587",
+                            "_id": "5cb878e593a1c41161254140",
+                            "application": "45963453495784t348eidgdgisgfw394u0",
+                            "entity": "5cb878cd93a1c4116125413c",
                             "data": {
-                                "key": "value2"
+                                "test": "Fulfil"
                             },
-                            "parent": "5c8265a55203f5b9e8dd24ae",
-                            "dateAdded": "2019-03-08T12:53:13.878Z",
-                            "dateUpdated": "2019-03-08T12:53:13.878Z",
+                            "dateAdded": "2019-04-18T13:17:25.320Z",
+                            "dateUpdated": "2019-04-18T13:17:25.320Z",
                             "__v": 0
                         }
-                    ]
-                },
-                {
-                    "_id": "5c8265b95203f5b9e8dd24b0",
-                    "assets": [],
-                    "application": "9676868887",
-                    "entity": "68698558589587",
-                    "data": {
-                        "key": "value2"
-                    },
-                    "parent": "5c8265a55203f5b9e8dd24ae",
-                    "dateAdded": "2019-03-08T12:53:13.878Z",
-                    "dateUpdated": "2019-03-08T12:53:13.878Z",
+                    ],
+                    "_id": "5cb878e593a1c41161254141",
+                    "application": "45963453495784t348eidgdgisgfw394u0",
+                    "entity": "5cb878cd93a1c4116125413c",
+                    "isDraft": false,
+                    "isActive": true,
+                    "status": "approve",
+                    "dateAdded": "2019-04-18T13:17:25.324Z",
+                    "dateUpdated": "2019-04-18T13:31:13.840Z",
                     "__v": 0,
-                    "parentHierarchy": [
-                        {
-                            "_id": "5c825c205203f5b9e8dd24ac",
-                            "assets": [],
-                            "application": "9676868887",
-                            "entity": "68698558589587",
-                            "data": {
-                                "key": "value1"
-                            },
-                            "dateAdded": "2019-03-08T12:12:16.041Z",
-                            "dateUpdated": "2019-03-08T12:12:16.041Z",
-                            "__v": 0
-                        },
-                        {
-                            "_id": "5c8265a55203f5b9e8dd24ae",
-                            "assets": [],
-                            "application": "9676868887",
-                            "entity": "68698558589587",
-                            "data": {
-                                "key": "value2"
-                            },
-                            "parent": "5c825c205203f5b9e8dd24ac",
-                            "dateAdded": "2019-03-08T12:52:53.413Z",
-                            "dateUpdated": "2019-03-08T12:52:53.413Z",
-                            "__v": 0
-                        }
-                    ]
+                    "reviewedAt": "2019-04-18T13:31:13.834Z"
                 },
-                {
-                    "_id": "5c8265a55203f5b9e8dd24ae",
-                    "assets": [],
-                    "application": "9676868887",
-                    "entity": "68698558589587",
-                    "data": {
-                        "key": "value2"
-                    },
-                    "parent": "5c825c205203f5b9e8dd24ac",
-                    "dateAdded": "2019-03-08T12:52:53.413Z",
-                    "dateUpdated": "2019-03-08T12:52:53.413Z",
-                    "__v": 0,
-                    "parentHierarchy": [
-                        {
-                            "_id": "5c825c205203f5b9e8dd24ac",
-                            "assets": [],
-                            "application": "9676868887",
-                            "entity": "68698558589587",
-                            "data": {
-                                "key": "value1"
-                            },
-                            "dateAdded": "2019-03-08T12:12:16.041Z",
-                            "dateUpdated": "2019-03-08T12:12:16.041Z",
-                            "__v": 0
-                        }
-                    ]
-                },
-                {
-                    "_id": "5c825c205203f5b9e8dd24ac",
-                    "assets": [],
-                    "application": "9676868887",
-                    "entity": "68698558589587",
-                    "data": {
-                        "key": "value1"
-                    },
-                    "dateAdded": "2019-03-08T12:12:16.041Z",
-                    "dateUpdated": "2019-03-08T12:12:16.041Z",
-                    "__v": 0,
-                    "parentHierarchy": []
-                }
-            ]
+                "_id": "5cb878cd93a1c4116125413c",
+                "application": "45963453495784t348eidgdgisgfw394u0",
+                "dateAdded": "2019-04-18T13:17:01.997Z",
+                "updatedAt": "2019-04-18T13:31:13.845Z",
+                "__v": 0,
+                "head": "5cb878e593a1c41161254141"
+            }
+        ]
         Headers:
             Content Type: application/json
 
 
-##  Get Asset Information
-    EndPoint: <domain-name>/asset/<asset-id>
+##  Get Entity Information
+    EndPoint: <domain-name>/entity/<entity-id>
+    Description: It provides the information of a particular entity associated with application.
  
 ### Request
     Request Type: GET
     Headers:
         Content Type: "application/json"
         Authorization: "JWT Token"
+        x-api-key: "Application Identifier or API key"
     Input Parameters:
-        asset-id: String (Required)
+        entity-id: String (Required)
 
 ### Basic Usage:
 
     $.ajax({
-        url: <domain-name>/asset/5c864848f7effe0be7d050d6,
+        url: <domain-name>/asset/5cb878cd93a1c4116125413c,
         type: "GET",
         headers: {
-            "Authorization":<JWT-token>
+            "Authorization":<JWT-token>,
+            "x-api-key":<application-identifier>
         },
         Content-Type:'application/json',
         success: function(response){},
@@ -226,75 +165,118 @@ you will receive a json object as below
         Code: 200 
         Message: "OK"
         Result:
-        {
-            "assets": [
-                "5c863fc73a2fa104e108ec6d",
-                "5c863fc73a2fa104e108ec6d"
-            ],
-            "_id": "5c864848f7effe0be7d050d6",
-            "application": "9676868887",
-            "entity": "68698558589587",
-            "dateAdded": "2019-03-11T11:36:40.494Z",
-            "dateUpdated": "2019-03-11T11:36:40.494Z",
-            "__v": 0
-        }
+        [
+            {
+                "addedBy": {
+                    "id": "96969jbjnbkbkkbuyiyiykmnbnbmnb",
+                    "name": "Krishna Yadav"
+                },
+                "isActive": true,
+                "approvedVersion": {
+                    "addedBy": {
+                        "id": "96969jbjnbkbkkbuyiyiykmnbnbmnb",
+                        "name": "Krishna Yadav"
+                    },
+                    "reviewedBy": {
+                        "id": "96969jbjnbkbkkbuyiyiykmnbnbmnb",
+                        "name": "Krishna Yadav"
+                    },
+                    "assets": [
+                        {
+                            "addedBy": {
+                                "id": "96969jbjnbkbkkbuyiyiykmnbnbmnb",
+                                "name": "Krishna Yadav"
+                            },
+                            "assets": [],
+                            "_id": "5cb878e593a1c4116125413f",
+                            "application": "45963453495784t348eidgdgisgfw394u0",
+                            "entity": "5cb878cd93a1c4116125413c",
+                            "data": {
+                                "abhishek": "jain",
+                                "organisation": "WNS"
+                            },
+                            "dateAdded": "2019-04-18T13:17:25.320Z",
+                            "dateUpdated": "2019-04-18T13:17:25.320Z",
+                            "__v": 0
+                        },
+                        {
+                            "addedBy": {
+                                "id": "96969jbjnbkbkkbuyiyiykmnbnbmnb",
+                                "name": "Krishna Yadav"
+                            },
+                            "assets": [],
+                            "_id": "5cb878e593a1c41161254140",
+                            "application": "45963453495784t348eidgdgisgfw394u0",
+                            "entity": "5cb878cd93a1c4116125413c",
+                            "data": {
+                                "test": "Fulfil"
+                            },
+                            "dateAdded": "2019-04-18T13:17:25.320Z",
+                            "dateUpdated": "2019-04-18T13:17:25.320Z",
+                            "__v": 0
+                        }
+                    ],
+                    "_id": "5cb878e593a1c41161254141",
+                    "application": "45963453495784t348eidgdgisgfw394u0",
+                    "entity": "5cb878cd93a1c4116125413c",
+                    "isDraft": false,
+                    "isActive": true,
+                    "status": "approve",
+                    "dateAdded": "2019-04-18T13:17:25.324Z",
+                    "dateUpdated": "2019-04-18T13:31:13.840Z",
+                    "__v": 0,
+                    "reviewedAt": "2019-04-18T13:31:13.834Z"
+                },
+                "_id": "5cb878cd93a1c4116125413c",
+                "application": "45963453495784t348eidgdgisgfw394u0",
+                "dateAdded": "2019-04-18T13:17:01.997Z",
+                "updatedAt": "2019-04-18T13:31:13.845Z",
+                "__v": 0,
+                "head": "5cb878e593a1c41161254141"
+            }
+        ]
         Headers:
             Content Type: application/json
 
 
-##  Create Version
-    EndPoint: <domain-name>/application/<applicationID>/entity/<entityID>
+##  Create Entity
+    EndPoint: <domain-name>/entity
  
 ### Request
     Request Type: POST
     Headers:
         Content Type: "application/json"
         Authorization: "JWT Token"
+        x-api-key: "Application Identifier or API Key"
     Input Parameters:
-        applicationID: String (Required)
-        entityID: String (Required)
-        previousVersion: String (Optional)
-        sections: [
+        actionType: string (Required) : It can contains "save" and "draft" values only, "save" means to send for review 
+        newSections: [
             Object {
-                data: Object (Required),
-                isUpdated: boolean (Optional)
-                previousVersion: String (Optional, if isUpdated = false else Required)
+                <content>   (Required)
             }
-        ] (Required)
-
-
+        ] (Required) To be used when there are new sections are added into the  entity
 
 ### Basic Usage:
 
     var data = {
-        "sections": [{
-            "data": {
-                "key1": "value1"
-            },
-            "isUpdated": false,
-            "previousVersion": "5c863fc73a2fa104e108ec6d"
+        "newSections": [{
+            "key1": "value1"
         },
         {
-            "data": {
-                "key2": "value2"
-            },
-            "isUpdated": true
+            "key2": "value2"
         },
         {
-            "data": {
-                "key3": "value3"
-            },
-            "isUpdated": false,
-            "previousVersion": "5c863fc73a2fa104e108ec6d"
+            "key3": "value3"
         }]
     }
 
     $.ajax({
-        url: <domain-name>/application/<applicationID>/entity/<entityID>,,
+        url: <domain-name>/entity,
         type: "POST",
         data: data,
         headers: {
-            "Authorization":<JWT-token>
+            "Authorization":<JWT-token>,
+            "x-api-key": Application Identifier or API Key
         },
         Content-Type:'application/json',
         success: function(response){},
@@ -305,7 +287,76 @@ you will receive a json object as below
 ### Response
 
 #####  HTTP Status (201):
-you will receive a json object which contains message "Suucessful"
+you will receive a json object which contains message "Sucessful"
+
+        Code: 201 
+        Message: "Created"
+        Result: 
+            {
+                "message": "Successful",
+            }
+        Headers:
+            Content Type: application/json
+
+##  Update Entity
+    EndPoint: <domain-name>/entity/<entity-id>
+ 
+### Request
+    Request Type: PUT
+    Headers:
+        Content Type: "application/json"
+        Authorization: "JWT Token"
+        x-api-key: "Application Identifier or API Key"
+    Input Parameters:
+        actionType: string (Required) : It can contains "save" and "draft" values only, "save" means to send for review 
+        newSections: [
+            Object {
+                <content>   (Required)
+            }
+        ] (Required) To be used when there are new sections are added into the  entity
+        sections: [
+            Object {
+                id: String (Required), // <version-id of the section>
+                data: Object {
+                    <content> 
+                } (Optional) // data to stored with respective section
+            }
+        ]
+
+### Basic Usage:
+
+    var data = {
+        "newSections": [{
+            "key1": "value4"
+        }],
+        "sections: [{
+            id: 5cb878e593a1c41161254140,
+        }, {
+            id: 5cb878e593a1c4116125413f,
+            data: {
+                "key5": "value10" 
+            }  
+        }]
+    }
+
+    $.ajax({
+        url: <domain-name>/entity/5cb878cd93a1c4116125413c,
+        type: "PUT",
+        data: data,
+        headers: {
+            "Authorization":<JWT-token>,
+            "x-api-key": Application Identifier or API Key
+        },
+        Content-Type:'application/json',
+        success: function(response){},
+        error: function(response){}
+    });
+
+
+### Response
+
+#####  HTTP Status (201):
+you will receive a json object which contains message "Sucessful"
 
         Code: 201 
         Message: "Created"
